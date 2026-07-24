@@ -12,7 +12,7 @@ load_dotenv()
 Secret_Key = os.getenv('SECRET_KEY')
 API_Key = os.getenv('API_KEY')
 serializer = URLSafeTimedSerializer(Secret_Key)
-Base_URL = "https://stumble-financial-buckskin.ngrok-free.dev"
+Base_URL = os.getenv("BASE_URL")
 Webhook_URL_for_make_confirmation = os.getenv("WEBHOOK_CONFIRMATION_URL")
 class LeaveLinkRequest(BaseModel):
     Request_ID : int
