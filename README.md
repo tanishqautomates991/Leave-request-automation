@@ -183,13 +183,13 @@ FastAPI backend confirmation showing the signed response returned to the scenari
 ├── requirements.txt
 ├── docs/
 │   └── screenshots/
-│       ├── 01-scenario-overview.png
-│       ├── 02-manager-inbox.png
+│       ├── main-trigger-scenari.png
+│       ├── manager's-inbox.png
 │       └── 03-fastapi-confirmation.png
 └── make-blueprints/
-    ├── blueprint-1.json
-    ├── blueprint-2.json
-    └── blueprint-3.json
+    ├── First Scenario.blueprint.json
+    ├── second scenario for rejected guy blueprint.json
+    └── Third scenario for backend confirmation blueprint.json
 ```
 
 ---
@@ -211,7 +211,7 @@ The full automation logic — Google Sheets sync, Gemini-based triage, and email
 
 ## Security & Idempotency
 
-Approval and rejection links are signed, single-use tokens issued by the FastAPI backend. They cannot be guessed or reused after processing.
+Approval and rejection links use signed, time-limited tokens. Idempotency checks prevent already-processed requests from being processed again.
 
 Every verification checks the current request state before acting. If the request has already been processed, the backend returns `already_processed` instead of repeating the update or sending duplicate notifications.
 
