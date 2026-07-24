@@ -116,17 +116,17 @@ sequenceDiagram
 A full working demo is included as annotated screenshots in [`docs/screenshots`](./docs/screenshots/).
 
 ### 1) Scenario Overview
-![Scenario overview](./docs/screenshots/Demo/main-trigger-scenario.png)
+![Scenario overview](./docs/screenshots/main-trigger-scenario.png)
 
 End-to-end workflow overview showing the connected modules and checked execution path.
 
 ### 2) Manager Inbox
-![Manager inbox with approval links](./docs/screenshots/Demo/manager's-inbox.png)
+![Manager inbox with approval links](./docs/screenshots/manager's-inbox.png)
 
 Manager notification email containing the AI summary, urgency, and visible approval/rejection links.
 
 ### 3) FastAPI Confirmation
-![FastAPI webhook confirmation](./docs/screenshots/Demo/fastapi-confirmation.png)
+![FastAPI webhook confirmation](./docs/screenshots/fastapi-confirmation.png)
 
 FastAPI backend confirmation showing the signed response returned to the scenario after approval action.
 
