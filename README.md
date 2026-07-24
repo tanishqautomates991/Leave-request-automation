@@ -2,8 +2,8 @@
 
 An event-driven leave workflow that automates request intake, AI-assisted triage, approval routing, and status updates from submission to final decision.
 
- Full annotated screenshot walkthrough: [`docs/screenshots`](./docs/screenshots/)  
- Make.com automation blueprints: [`make-blueprints`](./make-blueprints/)
+📸 Full annotated screenshot walkthrough: [`docs/screenshots`](./docs/screenshots/)  
+📋 Make.com automation blueprints: [`make-blueprints`](./make-blueprints/)
 
 ---
 
@@ -194,109 +194,18 @@ FastAPI backend confirmation showing the signed response returned to the scenari
 
 ---
 
-## Setup Steps
+## Setup Overview
 
-### 1. Organize Your Repository
+This repository is shared to demonstrate a working, end-to-end automation build. The [Demo](#demo) screenshots above show the complete flow in action without anything needing to be run.
 
-Move your files to match this structure:
-
-```bash
-# Create docs/screenshots folder structure
-mkdir -p docs/screenshots
-
-# Move your 3 screenshots to docs/screenshots/
-mv 01-scenario-overview.png docs/screenshots/
-mv 02-manager-inbox.png docs/screenshots/
-mv 03-fastapi-confirmation.png docs/screenshots/
-
-# Keep make-blueprints folder at root (it already has your JSON files)
-# Your folder structure should now look like the example above
-```
-
----
-
-### 2. Install Python Dependencies
+For anyone wanting to look at the implementation directly:
 
 ```bash
 pip install -r requirements.txt
-```
-
----
-
-### 3. Configure Environment Variables
-
-Create a `.env` file in the repository root with your credentials:
-
-```env
-GOOGLE_SHEETS_API_KEY=your_google_api_key
-GEMINI_API_KEY=your_gemini_api_key
-GMAIL_API_KEY=your_gmail_api_key
-FASTAPI_SECRET_KEY=your_secret_key_for_signing_tokens
-```
-
-> **Security Note:** Never commit `.env` to version control. Add it to `.gitignore`.
-
----
-
-### 4. Deploy FastAPI Backend
-
-**Local Testing:**
-```bash
 uvicorn main:app --reload
 ```
 
-**Production:**
-- Deploy to Heroku, Railway, Google Cloud Run, or AWS Lambda
-- Set environment variables in your deployment platform
-
----
-
-### 5. Import Make.com Blueprints
-
-1. Open [Make.com](https://make.com)
-2. Go to **Templates** → **Import a Blueprint**
-3. For each JSON file in `make-blueprints/`:
-   - Click **Import** 
-   - Upload the `.json` blueprint file
-   - Configure connections:
-     - **Google Sheets** — Connect your Google account
-     - **Gemini API** — Add your API key
-     - **Gmail** — Connect your Gmail account
-     - **FastAPI Webhook** — Set to your deployed FastAPI URL
-4. Enable each scenario and test with a sample leave request
-
-**Blueprint Configuration Reference:**
-- Update Google Sheets spreadsheet IDs in each module
-- Set your Gmail sender email address
-- Configure FastAPI webhook URL (e.g., `https://your-api.com/approve`)
-- Test each approval link in the manager email before going live
-
----
-
-### 6. Set Up Google Form & Sheets
-
-1. Create a Google Form for leave requests (Title, Leave Dates, Reason, etc.)
-2. Link responses to a Google Sheet
-3. Add columns for:
-   - Employee Name
-   - Leave Dates
-   - Number of Days
-   - Reason
-   - Status (Auto-filled by workflow)
-   - AI Summary (Auto-filled by Gemini)
-   - Urgency (Auto-filled by Gemini)
-
----
-
-### 7. Deploy Google Apps Script Trigger
-
-In your Google Sheet, go to **Extensions** → **Apps Script** and add a trigger that:
-
-1. Detects new form responses
-2. Calculates leave days
-3. Sends row data to your Make.com webhook
-
-> This script is not included in this repository. Use the Make.com blueprint as a reference for expected data format.
+The full automation logic — Google Sheets sync, Gemini-based triage, and email notifications — is available as importable scenario blueprints in [`make-blueprints/`](./make-blueprints/), which can be opened directly in Make.com to inspect the workflow.
 
 ---
 
@@ -326,12 +235,6 @@ No secrets are committed to the repository. Credentials are expected to be provi
 - Check that Make.com scenario is enabled
 - Verify FastAPI is running and URL is correct
 - Check FastAPI logs for 404 or authentication errors
-- Test webhook with a curl request:
-  ```bash
-  curl -X POST http://localhost:8000/webhook \
-    -H "Content-Type: application/json" \
-    -d '{"employee":"test","days":1}'
-  ```
 
 ---
 
@@ -346,6 +249,6 @@ No secrets are committed to the repository. Credentials are expected to be provi
 
 ## Documentation
 
--  Full annotated workflow: [`docs/screenshots`](./docs/screenshots/)
--  Make.com blueprints: [`make-blueprints`](./make-blueprints/)
--  API endpoints and token signing: See `main.py` docstrings
+- 📸 Full annotated workflow: [`docs/screenshots`](./docs/screenshots/)
+- 📋 Make.com blueprints: [`make-blueprints`](./make-blueprints/)
+- 🔐 API endpoints and token signing: See `main.py` docstrings
