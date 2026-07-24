@@ -4,7 +4,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 1: Form Submission](/docs/Overview/step-1-form-submission.png)
+![Step 1: Form Submission](/docs/screenshots/google-form-submission.png)
 
 
 *Step 1: Form Submission*
@@ -12,7 +12,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 2: Response Logged in Google Sheets](/docs/Overview/step-2-sheet-response.png)
+![Step 2: Response Logged in Google Sheets](/docs/screenshots/response-logged-in-google-sheets.png)
 
 
 *Step 2: Response Logged in Google Sheets*
@@ -20,7 +20,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 3: Successful Scenario Execution](/docs/Overview/step-3-scenario-execution.png)
+![Step 3: Successful Scenario Execution](/docs/screenshots/main-trigger-scenario.png)
 
 
 *Step 3: Successful Scenario Execution*
@@ -28,7 +28,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 4: Gemini Output Parsed](/docs/Overview/step-4-parse-json.png)
+![Step 4: Gemini Output Parsed](/docs/screenshots/gemini-output-parsed.png)
 
 
 *Step 4: Gemini Output Parsed*
@@ -36,7 +36,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 5: FastAPI Approval Links Generated](/docs/Overview/step-5-http-response.png)
+![Step 5: FastAPI Approval Links Generated](/docs/screenshots/fastapi-approval-link-generation.png)
 
 
 *Step 5: FastAPI Approval Links Generated*
@@ -44,7 +44,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 6: Manager Notification Sent](/docs/Overview/step-6-manager-email.png)
+![Step 6: Manager Notification Sent](/docs/screenshots/manager's-inbox.png)
 
 
 *Step 6: Manager Notification Sent*
@@ -52,7 +52,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 7: Employee Notified of Pending Request](/docs/Overview/step-7-employee-pending-email.png)
+![Step 7: Employee Notified of Pending Request](/docs/screenshots/employee-notified-of-pending.png)
 
 
 *Step 7: Employee Notified of Pending Request*
@@ -60,7 +60,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 8: Manager Approves the Request](/docs/Overview/step-8-approval-click.png)
+![Step 8: Manager Approves the Request](/docs/screenshots/json-response-from-backend.png)
 
 
 *Step 8: Manager Approves the Request*
@@ -76,7 +76,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 10: Employee Receives Final Approval Email](/docs/Overview/step-10-employee-approved-email.png)
+![Step 10: Employee Receives Final Approval Email](/docs/screenshots/employee-recieives-final-confirmation.png)
 
 
 *Step 10: Employee Receives Final Approval Email*
@@ -84,7 +84,7 @@ This demo traces a single, unique leave request: a standard request under 5 days
 
 
 
-![Step 11: Idempotency Verified on Repeated Click](/docs/Overview/step-11-idempotency-check.png)
+![Step 11: Idempotency Verified on Repeated Click](/docs/screenshots/Idempotency-check.png)
 
 
 *Step 11: Idempotency Verified on Repeated Click*
