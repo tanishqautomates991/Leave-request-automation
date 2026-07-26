@@ -249,6 +249,6 @@ No secrets are committed to the repository. Credentials are expected to be provi
 
 ## Documentation
 
-- 📸 Full annotated workflow: [`docs/screenshots`](./docs/screenshots/)
+- 📸 Full annotated workflow: [`docs/screenshots`](./docs/screenshots/Demo)
 - 📋 Make.com blueprints: [`make-blueprints`](./make-blueprints/)
 - 🔐 API endpoints and token signing: See `main.py` docstrings
