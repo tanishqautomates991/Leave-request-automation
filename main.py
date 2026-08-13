@@ -15,7 +15,7 @@ API_KEY = os.getenv("API_KEY")
 app = FastAPI()
 Serializer = URLSafeTimedSerializer(SECRET_KEY)
 class LeaveRequest(BaseModel):
-  Request_ID : int
+  Request_ID : str
   Employee_ID : str
 @app.post("/generate-links")
 def generate_links(data : LeaveRequest, x_api_key : str = Header(...)):
