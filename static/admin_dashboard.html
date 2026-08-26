@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Leave Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F8F9FA;
+            color: #202124;
+        }
+        
+        .material-shadow {
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+        }
+        
+        .material-shadow-hover:hover {
+            box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            transition: box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        /* Minimalist Grid Sparkline */
+        .sparkline-grid {
+            display: grid;
+            grid-template-columns: repeat(30, 1fr);
+            align-items: end;
+            gap: 2px;
+            height: 60px;
+        }
+        .spark-bar {
+            background-color: #1a73e8;
+            border-radius: 1px 1px 0 0;
+            opacity: 0.8;
+            transition: height 0.3s ease;
+        }
+        .spark-bar:hover {
+            opacity: 1;
+            background-color: #174ea6;
+        }
+
+        /* Custom Scrollbar for tables */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f3f4; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dadce0; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #bdc1c6; 
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Top Bar -->
+    <nav class="bg-white material-shadow sticky top-0 z-50 flex items-center justify-between px-6 py-4">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-xl font-medium text-[#202124]">Leave Management Admin</h1>
+            <div class="flex space-x-2">
+                <span class="px-3 py-1 bg-[#e6f4ea] text-[#137333] text-xs font-medium rounded-full">System Live</span>
+                <span class="px-3 py-1 bg-[#fef7e0] text-[#b06000] text-xs font-medium rounded-full">Syncing</span>
+            </div>
+        </div>
+        <div class="text-sm text-[#5f6368] font-medium">
+            Administrator
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        
+        <!-- AI Analytics Insight Block -->
+        <section class="bg-white rounded-lg p-6 material-shadow border-l-4 border-[#1a73e8]">
+            <div class="flex items-start space-x-3">
+                <svg class="w-6 h-6 text-[#1a73e8] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                <div>
+                    <h2 class="text-sm font-medium text-[#1a73e8] uppercase tracking-wide">AI Analytics Insight (Databox Genie / MCP)</h2>
+                    <p class="text-[#3c4043] mt-2 text-sm leading-relaxed" id="ai-insight-text">
+                        <!-- Placeholder for Plain-English Operational Text -->
+                        Loading AI insights... Waiting for Databox MCP integration to generate plain-text analytics regarding recent leave trends, department shortages, and flagged anomaly behaviors.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Executive High-Level KPIs -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Card 1 -->
+            <div class="bg-white p-6 rounded-lg material-shadow material-shadow-hover">
+                <h3 class="text-sm font-medium text-[#5f6368]">Total Leave Requests</h3>
+                <p class="text-3xl font-normal text-[#202124] mt-2" id="kpi-total">1,248</p>
+            </div>
+            <!-- Card 2 -->
+            <div class="bg-white p-6 rounded-lg material-shadow material-shadow-hover">
+                <h3 class="text-sm font-medium text-[#5f6368]">Pending Approvals</h3>
+                <p class="text-3xl font-normal text-[#ea4335] mt-2" id="kpi-pending">42</p>
+            </div>
+            <!-- Card 3 -->
+            <div class="bg-white p-6 rounded-lg material-shadow material-shadow-hover">
+                <h3 class="text-sm font-medium text-[#5f6368]">Total Approved</h3>
+                <p class="text-3xl font-normal text-[#34a853] mt-2" id="kpi-approved">1,180</p>
+            </div>
+            <!-- Card 4 -->
+            <div class="bg-white p-6 rounded-lg material-shadow material-shadow-hover">
+                <h3 class="text-sm font-medium text-[#5f6368]">Flagged / Invalid Entries</h3>
+                <p class="text-3xl font-normal text-[#fbbc04] mt-2" id="kpi-invalid">26</p>
+            </div>
+        </section>
+
+        <!-- Sparkline / Trend Section -->
+        <section class="bg-white rounded-lg p-6 material-shadow">
+            <div class="flex justify-between items-end mb-4">
+                <h2 class="text-base font-medium text-[#202124]">30-Day Leave Request Trend</h2>
+                <span class="text-xs text-[#5f6368]">Requests per day</span>
+            </div>
+            <div class="sparkline-grid" id="sparkline-container">
+                <!-- Spark bars will be injected here via JS -->
+            </div>
+            <div class="flex justify-between mt-2 text-xs text-[#5f6368]">
+                <span>30 Days Ago</span>
+                <span>Today</span>
+            </div>
+        </section>
+
+        <!-- Data Filter Slicers & Main Data Logs -->
+        <section class="bg-white rounded-lg material-shadow overflow-hidden">
+            <!-- Slicers -->
+            <div class="border-b border-[#dadce0] p-4 bg-[#f8f9fa] flex flex-wrap gap-4 items-center">
+                <span class="text-sm font-medium text-[#5f6368] mr-2">Filters:</span>
+                
+                <select id="filter-department" class="bg-white border border-[#dadce0] text-sm rounded px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#1a73e8] focus:border-[#1a73e8] text-[#3c4043]">
+                    <option value="All">All Departments</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Sales">Sales</option>
+                    <option value="HR">HR</option>
+                    <option value="Marketing">Marketing</option>
+                </select>
+
+                <select id="filter-type" class="bg-white border border-[#dadce0] text-sm rounded px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#1a73e8] focus:border-[#1a73e8] text-[#3c4043]">
+                    <option value="All">All Leave Types</option>
+                    <option value="Sick">Sick Leave</option>
+                    <option value="Casual">Casual Leave</option>
+                    <option value="Annual">Annual Leave</option>
+                </select>
+
+                <select id="filter-status" class="bg-white border border-[#dadce0] text-sm rounded px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#1a73e8] focus:border-[#1a73e8] text-[#3c4043]">
+                    <option value="All">All Statuses</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Rejected">Rejected</option>
+                    <option value="Invalid">Invalid</option>
+                </select>
+            </div>
+
+            <!-- Data Table -->
+            <div class="overflow-x-auto max-h-[500px]">
+                <table class="w-full text-left text-sm text-[#3c4043] whitespace-nowrap">
+                    <thead class="text-xs text-[#5f6368] uppercase bg-white sticky top-0 shadow-sm">
+                        <tr>
+                            <th class="px-6 py-3 font-medium">Req ID</th>
+                            <th class="px-6 py-3 font-medium">Employee</th>
+                            <th class="px-6 py-3 font-medium">Department</th>
+                            <th class="px-6 py-3 font-medium">Leave Type</th>
+                            <th class="px-6 py-3 font-medium">Dates</th>
+                            <th class="px-6 py-3 font-medium">Days</th>
+                            <th class="px-6 py-3 font-medium">Status / Reason</th>
+                        </tr>
+                    </thead>
+                    <tbody id="data-table-body" class="divide-y divide-[#f1f3f4]">
+                        <!-- Dynamic Rows Injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Mock Data to demonstrate UI functionality
+        const mockData = [
+            { id: "REQ-1001", name: "Alice Smith", dept: "Engineering", type: "Annual", dates: "Oct 12 - Oct 15", days: 4, status: "Approved" },
+            { id: "REQ-1002", name: "Bob Johnson", dept: "Sales", type: "Sick", dates: "Oct 14 - Oct 14", days: 1, status: "Pending" },
+            { id: "REQ-1003", name: "Charlie Davis", dept: "HR", type: "Casual", dates: "Oct 20 - Oct 21", days: 2, status: "Rejected" },
+            { id: "INV-0042", name: "Diana Prince", dept: "Marketing", type: "Sick", dates: "Oct 01 - Oct 05", days: 5, status: "Invalid", reason: "Missing Doctor Note" },
+            { id: "REQ-1005", name: "Ethan Hunt", dept: "Engineering", type: "Annual", dates: "Nov 01 - Nov 10", days: 10, status: "Approved" },
+            { id: "REQ-1006", name: "Fiona Gallagher", dept: "Sales", type: "Sick", dates: "Oct 15 - Oct 16", days: 2, status: "Approved" }
+        ];
+
+        // Generate Sparkline Bars
+        const sparklineContainer = document.getElementById('sparkline-container');
+        for(let i = 0; i < 30; i++) {
+            const heightPercentage = Math.floor(Math.random() * 80) + 10; // Random height between 10% and 90%
+            const bar = document.createElement('div');
+            bar.className = 'spark-bar';
+            bar.style.height = heightPercentage + '%';
+            bar.title = `${heightPercentage} requests`;
+            sparklineContainer.appendChild(bar);
+        }
+
+        // Render Table
+        const tbody = document.getElementById('data-table-body');
+        
+        function getStatusPill(status, reason) {
+            let classes = "px-2 py-1 rounded-full text-xs font-medium ";
+            if(status === 'Approved') classes += "bg-[#e6f4ea] text-[#137333]";
+            else if(status === 'Pending') classes += "bg-[#fef7e0] text-[#b06000]";
+            else if(status === 'Rejected') classes += "bg-[#fce8e6] text-[#c5221f]";
+            else if(status === 'Invalid') classes += "bg-[#f1f3f4] text-[#5f6368]";
+            
+            let html = `<span class="${classes}">${status}</span>`;
+            if(reason) {
+                html += `<span class="ml-2 text-xs text-[#c5221f] font-medium">- ${reason}</span>`;
+            }
+            return html;
+        }
+
+        function renderTable(data) {
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-[#f8f9fa] transition-colors";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 font-medium text-[#202124]">${row.id}</td>
+                    <td class="px-6 py-4">${row.name}</td>
+                    <td class="px-6 py-4">${row.dept}</td>
+                    <td class="px-6 py-4">${row.type}</td>
+                    <td class="px-6 py-4">${row.dates}</td>
+                    <td class="px-6 py-4">${row.days}</td>
+                    <td class="px-6 py-4">${getStatusPill(row.status, row.reason)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filter Logic
+        const filters = {
+            dept: document.getElementById('filter-department'),
+            type: document.getElementById('filter-type'),
+            status: document.getElementById('filter-status')
+        };
+
+        function applyFilters() {
+            let filtered = mockData.filter(item => {
+                const matchDept = filters.dept.value === 'All' || item.dept === filters.dept.value;
+                const matchType = filters.type.value === 'All' || item.type === filters.type.value;
+                const matchStatus = filters.status.value === 'All' || item.status === filters.status.value;
+                return matchDept && matchType && matchStatus;
+            });
+            renderTable(filtered);
+        }
+
+        Object.values(filters).forEach(select => {
+            select.addEventListener('change', applyFilters);
+        });
+
+        // Initial Render
+        renderTable(mockData);
+        
+        // Mocking AI Insight Update
+        setTimeout(() => {
+            document.getElementById('ai-insight-text').innerHTML = "<strong>Insight generated:</strong> Anomaly detected in the Sales department with a 40% spike in casual leave requests this week. Invalid entries primarily stem from missing document uploads for leaves exceeding 3 days.";
+        }, 2000);
+
+    </script>
+</body>
+</html>
