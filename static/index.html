@@ -1,1 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Request Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Google Sans', sans-serif;
+            background-color: #F8F9FA;
+        }
+
+        /* Micro-interactions & Animations */
+        .scale-up {
+            animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes scaleUp {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+
+    <!-- Main Card Container -->
+    <div id="main-container" class="max-w-md w-full bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden hidden fade-in border border-gray-100">
+        
+        <!-- Header -->
+        <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white">
+            <h1 class="text-xl font-medium">Leave Portal</h1>
+            <span id="status-pill" class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">Action Required</span>
+        </div>
+
+        <!-- Content Area -->
+        <div class="p-6">
+            
+            <!-- 1. Initial Loading State -->
+            <div id="initial-loading" class="flex flex-col items-center justify-center py-8">
+                <!-- Smooth Pulse Spinner -->
+                <svg class="animate-spin h-8 w-8 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-gray-500 text-sm">Verifying request details...</p>
+            </div>
+
+            <!-- 2. Interactive Details Card -->
+            <div id="details-card" class="hidden">
+                <!-- Request Info -->
+                <div class="bg-slate-50 rounded-xl p-5 mb-6 border border-slate-100 shadow-sm">
+                    <div class="flex justify-between mb-3">
+                        <span class="text-sm text-gray-500">Request ID</span>
+                        <span id="req-id" class="text-sm font-medium"></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-sm text-gray-500">Employee ID</span>
+                        <span id="emp-id" class="text-sm font-medium"></span>
+                    </div>
+                </div>
+
+                <!-- Decision Context -->
+                <div id="decision-card" class="mb-8 text-center p-4 rounded-xl border">
+                    <p id="decision-text" class="text-[15px] font-medium"></p>
+                </div>
+
+                <!-- Action Button -->
+                <button id="action-btn" class="w-full py-3.5 px-4 rounded-xl text-white font-medium transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-offset-2 flex justify-center items-center">
+                    <span id="btn-text">Confirm Action</span>
+                    <!-- Button Spinner -->
+                    <svg id="btn-spinner" class="animate-spin ml-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 3. Success State (Checkmark scale-up) -->
+            <div id="success-state" class="hidden flex-col items-center justify-center py-6 text-center fade-in">
+                <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-5 scale-up">
+                    <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-medium mb-2">Success</h2>
+                <p id="success-message" class="text-gray-500 text-sm"></p>
+            </div>
+
+            <!-- 4. Already Processed State (Amber) -->
+            <div id="warning-state" class="hidden flex-col items-center justify-center py-6 text-center fade-in">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-5 scale-up">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-medium mb-2">Already Processed</h2>
+                <p id="warning-message" class="text-gray-500 text-sm">This link has already been used.</p>
+            </div>
+
+            <!-- 5. Error State (Crimson/Rose) -->
+            <div id="error-state" class="hidden flex-col items-center justify-center py-6 text-center fade-in">
+                <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mb-5 scale-up">
+                    <svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-medium mb-2">Error</h2>
+                <p id="error-message" class="text-gray-500 text-sm"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Frontend Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Read Token from URL params
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            
+            // DOM Elements
+            const mainContainer = document.getElementById('main-container');
+            const initialLoading = document.getElementById('initial-loading');
+            const detailsCard = document.getElementById('details-card');
+            
+            const reqIdEl = document.getElementById('req-id');
+            const empIdEl = document.getElementById('emp-id');
+            const decisionCard = document.getElementById('decision-card');
+            const decisionText = document.getElementById('decision-text');
+            const actionBtn = document.getElementById('action-btn');
+            const btnText = document.getElementById('btn-text');
+            const btnSpinner = document.getElementById('btn-spinner');
+            
+            const successState = document.getElementById('success-state');
+            const successMessage = document.getElementById('success-message');
+            
+            const warningState = document.getElementById('warning-state');
+            const warningMessage = document.getElementById('warning-message');
+            
+            const errorState = document.getElementById('error-state');
+            const errorMessage = document.getElementById('error-message');
+            const statusPill = document.getElementById('status-pill');
+
+            // Show container to trigger CSS fade-in
+            mainContainer.classList.remove('hidden');
+
+            if (!token) {
+                initialLoading.classList.add('hidden');
+                showError("No token provided in the URL.");
+                return;
+            }
+
+            // Fetch Token Details without taking final action
+            fetch(`/api/verify-token?token=${encodeURIComponent(token)}`)
+                .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                .then(({ status, body }) => {
+                    initialLoading.classList.add('hidden');
+                    
+                    if (status !== 200) {
+                        showError(body.detail || "Invalid or expired token.");
+                        return;
+                    }
+
+                    // Populate UI Details
+                    detailsCard.classList.remove('hidden');
+                    reqIdEl.textContent = body.Request_ID;
+                    empIdEl.textContent = body.Employee_ID;
+                    
+                    const action = body.Action.toLowerCase();
+                    
+                    // Style UI based on action
+                    if (action === 'approved') {
+                        decisionCard.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+                        decisionText.textContent = "You are about to APPROVE this leave request.";
+                        actionBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'focus:ring-emerald-500');
+                        btnText.textContent = "Confirm Approval";
+                    } else {
+                        decisionCard.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-200');
+                        decisionText.textContent = "You are about to REJECT this leave request.";
+                        actionBtn.classList.add('bg-rose-600', 'hover:bg-rose-700', 'focus:ring-rose-500');
+                        btnText.textContent = "Confirm Rejection";
+                    }
+
+                    // Attach click handler for confirmation
+                    actionBtn.addEventListener('click', () => submitAction(token, actionBtn, btnText, btnSpinner));
+                })
+                .catch(err => {
+                    initialLoading.classList.add('hidden');
+                    showError("Failed to connect to the server.");
+                });
+
+            // Trigger Final Action
+            function submitAction(token, btn, textEl, spinnerEl) {
+                // Set Loading state on the button
+                btn.disabled = true;
+                textEl.textContent = "Syncing with n8n workflow...";
+                spinnerEl.classList.remove('hidden');
+                btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+                fetch('/api/submit-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                })
+                .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                .then(({ status, body }) => {
+                    // Hide Details Card & Status pill
+                    detailsCard.classList.add('hidden');
+                    statusPill.classList.add('hidden');
+                    
+                    if (status === 200) {
+                        if (body.status === 'already_processed') {
+                            showWarning(body.message);
+                        } else {
+                            showSuccess(body.message);
+                        }
+                    } else {
+                        showError(body.detail || "An error occurred while processing.");
+                    }
+                })
+                .catch(err => {
+                    detailsCard.classList.add('hidden');
+                    statusPill.classList.add('hidden');
+                    showError("Failed to communicate with the server.");
+                });
+            }
+
+            // State UI functions
+            function showSuccess(msg) {
+                successState.classList.remove('hidden');
+                successMessage.textContent = msg;
+                statusPill.textContent = "Completed";
+                statusPill.classList.remove('hidden', 'bg-blue-50', 'text-blue-700');
+                statusPill.classList.add('bg-emerald-50', 'text-emerald-700');
+            }
+
+            function showWarning(msg) {
+                warningState.classList.remove('hidden');
+                warningMessage.textContent = msg;
+                statusPill.textContent = "Processed";
+                statusPill.classList.remove('hidden', 'bg-blue-50', 'text-blue-700');
+                statusPill.classList.add('bg-amber-50', 'text-amber-700');
+            }
+
+            function showError(msg) {
+                errorState.classList.remove('hidden');
+                errorMessage.textContent = msg;
+                statusPill.textContent = "Error";
+                statusPill.classList.remove('hidden', 'bg-blue-50', 'text-blue-700');
+                statusPill.classList.add('bg-rose-50', 'text-rose-700');
+            }
+        });
+    </script>
+</body>
+</html>
 
