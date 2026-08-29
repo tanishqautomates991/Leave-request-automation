@@ -3,211 +3,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leave Request Portal</title>
-    <!-- Tailwind CSS -->
+    <title>Leave Request Approval</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         
         body {
-            font-family: 'Google Sans', sans-serif;
-            background-color: #F8F9FA;
+            font-family: 'Inter', sans-serif;
         }
 
-        /* Micro-interactions & Animations */
-        .scale-up {
-            animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes scaleUp {
-            from { transform: scale(0.5); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        .anim-spring-scale {
+            animation: springScale 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        .fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
+        @keyframes springScale {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.05); opacity: 0.9; }
+            100% { transform: scale(1); opacity: 1; }
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        .step-active-glow {
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+<body class="min-h-screen bg-[#F3F4F6] flex items-center justify-center p-4 antialiased text-gray-800">
 
-    <!-- Main Card Container -->
-    <div id="main-container" class="max-w-md w-full bg-white rounded-2xl shadow-[0_2px_12px_rgba(0,0,0,0.06)] overflow-hidden hidden fade-in border border-gray-100">
+    <div class="w-full max-w-[440px] bg-white rounded-[28px] shadow-[0_12px_40px_-12px_rgba(0,0,0,0.1)] border border-gray-100 overflow-hidden flex flex-col relative transition-all duration-300">
         
-        <!-- Header -->
-        <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-white">
-            <h1 class="text-xl font-medium">Leave Portal</h1>
-            <span id="status-pill" class="px-3 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full">Action Required</span>
+        <!-- STEPPER HEADER -->
+        <div class="px-8 pt-8 pb-4 flex justify-center w-full z-10 bg-white">
+            <div class="flex items-center w-full max-w-[280px] justify-between relative">
+                
+                <!-- Connector lines -->
+                <div class="absolute top-[14px] left-0 w-full h-[2px] bg-gray-100 -z-10"></div>
+                <div id="progress-bar" class="absolute top-[14px] left-0 h-[2px] bg-blue-600 -z-10 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] w-0"></div>
+                
+                <!-- Step 1 -->
+                <div class="flex flex-col items-center bg-white px-2">
+                    <div id="step-circle-1" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors duration-300 ring-[6px] ring-white bg-blue-600 text-white step-active-glow">
+                        <span id="step-icon-1">1</span>
+                    </div>
+                    <span class="text-[10px] font-semibold mt-2 text-blue-600 uppercase tracking-wider transition-colors duration-300" id="step-label-1">Review</span>
+                </div>
+                <!-- Step 2 -->
+                <div class="flex flex-col items-center bg-white px-2">
+                    <div id="step-circle-2" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors duration-300 ring-[6px] ring-white bg-gray-100 text-gray-400">
+                        <span id="step-icon-2">2</span>
+                    </div>
+                    <span class="text-[10px] font-semibold mt-2 text-gray-400 uppercase tracking-wider transition-colors duration-300" id="step-label-2">Decision</span>
+                </div>
+                <!-- Step 3 -->
+                <div class="flex flex-col items-center bg-white px-2">
+                    <div id="step-circle-3" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors duration-300 ring-[6px] ring-white bg-gray-100 text-gray-400">
+                        <span id="step-icon-3">3</span>
+                    </div>
+                    <span class="text-[10px] font-semibold mt-2 text-gray-400 uppercase tracking-wider transition-colors duration-300" id="step-label-3">Complete</span>
+                </div>
+                
+            </div>
         </div>
 
-        <!-- Content Area -->
-        <div class="p-6">
+        <!-- DYNAMIC CONTENT CONTAINER -->
+        <div class="relative overflow-hidden transition-[height] duration-300 ease-in-out" id="content-container" style="height: 200px;">
             
-            <!-- 1. Initial Loading State -->
-            <div id="initial-loading" class="flex flex-col items-center justify-center py-8">
-                <!-- Smooth Pulse Spinner -->
+            <!-- LOADING STATE -->
+            <div id="view-loading" class="absolute w-full top-0 left-0 flex flex-col items-center justify-center bg-white p-8 transition-opacity duration-300 z-20 opacity-100 pointer-events-auto">
                 <svg class="animate-spin h-8 w-8 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <p class="text-gray-500 text-sm">Verifying request details...</p>
+                <p class="text-sm text-gray-500 font-medium">Verifying request details...</p>
             </div>
 
-            <!-- 2. Interactive Details Card -->
-            <div id="details-card" class="hidden">
-                <!-- Request Info -->
-                <div class="bg-slate-50 rounded-xl p-5 mb-6 border border-slate-100 shadow-sm">
-                    <div class="flex justify-between mb-3">
-                        <span class="text-sm text-gray-500">Request ID</span>
-                        <span id="req-id" class="text-sm font-medium"></span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-gray-500">Employee ID</span>
-                        <span id="emp-id" class="text-sm font-medium"></span>
+            <!-- STEP 1: REVIEW -->
+            <div id="view-step-1" class="absolute w-full top-0 left-0 flex flex-col p-8 opacity-0 pointer-events-none translate-x-8 transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] z-10">
+                <h2 class="text-[22px] font-semibold mb-6 text-gray-900 tracking-tight">Review Request</h2>
+                
+                <div class="bg-gray-50 rounded-2xl p-5 mb-8 border border-gray-100">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Request ID</span>
+                            <span class="text-sm font-medium text-gray-900" id="s1-req-id"></span>
+                        </div>
+                        <div class="h-[1px] bg-gray-200/60 w-full"></div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">Employee ID</span>
+                            <span class="text-sm font-medium text-gray-900" id="s1-emp-id"></span>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Decision Context -->
-                <div id="decision-card" class="mb-8 text-center p-4 rounded-xl border">
-                    <p id="decision-text" class="text-[15px] font-medium"></p>
-                </div>
-
-                <!-- Action Button -->
-                <button id="action-btn" class="w-full py-3.5 px-4 rounded-xl text-white font-medium transition-all duration-200 shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-offset-2 flex justify-center items-center">
-                    <span id="btn-text">Confirm Action</span>
-                    <!-- Button Spinner -->
-                    <svg id="btn-spinner" class="animate-spin ml-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
+                
+                <button id="btn-continue" class="mt-auto w-full py-3.5 px-4 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Continue
                 </button>
             </div>
 
-            <!-- 3. Success State (Checkmark scale-up) -->
-            <div id="success-state" class="hidden flex-col items-center justify-center py-6 text-center fade-in">
-                <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-5 scale-up">
-                    <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- STEP 2: DECISION -->
+            <div id="view-step-2" class="absolute w-full top-0 left-0 flex flex-col p-8 opacity-0 pointer-events-none translate-x-8 transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] z-10">
+                
+                <div id="decision-form" class="flex flex-col h-full relative">
+                    <h2 class="text-[22px] font-semibold mb-2 text-gray-900 tracking-tight">Confirm Decision</h2>
+                    <p class="text-sm text-gray-500 mb-6" id="s2-subtitle">Please review your action before proceeding.</p>
+                    
+                    <div id="decision-box" class="rounded-2xl p-5 mb-8 border transition-colors duration-300">
+                        <p id="decision-text" class="font-medium text-[15px] mb-3 text-center"></p>
+                        
+                        <div class="bg-white rounded-xl p-3 shadow-sm border border-black/5 mt-4 text-center">
+                            <div class="text-xs text-gray-400 mb-1">Applying to</div>
+                            <div class="text-sm font-medium text-gray-800" id="s2-summary"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-3 mt-auto">
+                        <button id="btn-back" class="py-3.5 px-5 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl font-medium transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-gray-200">
+                            Back
+                        </button>
+                        <button id="btn-confirm" class="flex-1 py-3.5 px-4 text-white rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2">
+                            <span id="btn-confirm-text">Confirm Action</span>
+                        </button>
+                    </div>
+
+                    <!-- Processing State inside Step 2 -->
+                    <div id="processing-state" class="absolute inset-0 bg-white/95 backdrop-blur-sm flex flex-col items-center justify-center z-20 transition-opacity duration-300 opacity-0 pointer-events-none rounded-2xl">
+                        <div class="w-12 h-12 relative mb-6">
+                            <svg class="animate-spin absolute inset-0 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Syncing with n8n workflow...</h3>
+                        <p class="text-sm text-gray-500 text-center">Please wait while your decision is being recorded.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: SUCCESS -->
+            <div id="view-step-3" class="absolute w-full top-0 left-0 flex flex-col items-center justify-center p-8 opacity-0 pointer-events-none translate-x-8 transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] text-center z-10">
+                <div class="w-[72px] h-[72px] bg-emerald-50 rounded-full flex items-center justify-center mb-6" id="success-icon">
+                    <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                     </svg>
                 </div>
-                <h2 class="text-xl font-medium mb-2">Success</h2>
-                <p id="success-message" class="text-gray-500 text-sm"></p>
+                <h2 class="text-[22px] font-semibold mb-3 text-gray-900">Completed</h2>
+                <p id="success-message" class="text-gray-500 text-[15px] leading-relaxed max-w-[280px]"></p>
             </div>
 
-            <!-- 4. Already Processed State (Amber) -->
-            <div id="warning-state" class="hidden flex-col items-center justify-center py-6 text-center fade-in">
-                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-5 scale-up">
-                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- WARNING STATE -->
+            <div id="view-warning" class="absolute w-full top-0 left-0 flex flex-col items-center justify-center p-8 opacity-0 pointer-events-none transition-all duration-500 text-center bg-white z-30">
+                <div class="w-[72px] h-[72px] bg-amber-50 rounded-full flex items-center justify-center mb-6" id="warning-icon">
+                    <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
                 </div>
-                <h2 class="text-xl font-medium mb-2">Already Processed</h2>
-                <p id="warning-message" class="text-gray-500 text-sm">This link has already been used.</p>
+                <h2 class="text-[22px] font-semibold mb-3 text-gray-900">Already Processed</h2>
+                <p id="warning-message" class="text-gray-500 text-[15px] leading-relaxed max-w-[280px]">This link has already been used. The status is already updated.</p>
             </div>
 
-            <!-- 5. Error State (Crimson/Rose) -->
-            <div id="error-state" class="hidden flex-col items-center justify-center py-6 text-center fade-in">
-                <div class="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center mb-5 scale-up">
-                    <svg class="w-8 h-8 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- ERROR STATE -->
+            <div id="view-error" class="absolute w-full top-0 left-0 flex flex-col items-center justify-center p-8 opacity-0 pointer-events-none transition-all duration-500 text-center bg-white z-30">
+                <div class="w-[72px] h-[72px] bg-rose-50 rounded-full flex items-center justify-center mb-6" id="error-icon">
+                    <svg class="w-8 h-8 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </div>
-                <h2 class="text-xl font-medium mb-2">Error</h2>
-                <p id="error-message" class="text-gray-500 text-sm"></p>
+                <h2 class="text-[22px] font-semibold mb-3 text-gray-900">Invalid Link</h2>
+                <p id="error-message" class="text-gray-500 text-[15px] leading-relaxed max-w-[280px]"></p>
             </div>
-
+            
         </div>
     </div>
 
-    <!-- Frontend Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Read Token from URL params
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');
             
-            // DOM Elements
-            const mainContainer = document.getElementById('main-container');
-            const initialLoading = document.getElementById('initial-loading');
-            const detailsCard = document.getElementById('details-card');
-            
-            const reqIdEl = document.getElementById('req-id');
-            const empIdEl = document.getElementById('emp-id');
-            const decisionCard = document.getElementById('decision-card');
-            const decisionText = document.getElementById('decision-text');
-            const actionBtn = document.getElementById('action-btn');
-            const btnText = document.getElementById('btn-text');
-            const btnSpinner = document.getElementById('btn-spinner');
-            
-            const successState = document.getElementById('success-state');
-            const successMessage = document.getElementById('success-message');
-            
-            const warningState = document.getElementById('warning-state');
-            const warningMessage = document.getElementById('warning-message');
-            
-            const errorState = document.getElementById('error-state');
-            const errorMessage = document.getElementById('error-message');
-            const statusPill = document.getElementById('status-pill');
+            const views = {
+                loading: document.getElementById('view-loading'),
+                step1: document.getElementById('view-step-1'),
+                step2: document.getElementById('view-step-2'),
+                step3: document.getElementById('view-step-3'),
+                warning: document.getElementById('view-warning'),
+                error: document.getElementById('view-error')
+            };
 
-            // Show container to trigger CSS fade-in
-            mainContainer.classList.remove('hidden');
+            const container = document.getElementById('content-container');
+
+            function setContainerHeight(el) {
+                const height = el.offsetHeight;
+                if (height > 0) {
+                    container.style.height = height + 'px';
+                }
+            }
+            
+            // Initial height set to loading
+            setContainerHeight(views.loading);
+
+            function setView(targetView) {
+                const steps = [views.step1, views.step2, views.step3];
+                const targetIdx = steps.indexOf(targetView);
+                
+                Object.values(views).forEach(el => {
+                    if (el === targetView) return;
+                    
+                    el.classList.remove('opacity-100', 'pointer-events-auto', 'translate-x-0');
+                    el.classList.add('opacity-0', 'pointer-events-none');
+                    
+                    const elIdx = steps.indexOf(el);
+                    if (elIdx !== -1 && targetIdx !== -1) {
+                        if (elIdx < targetIdx) {
+                            el.classList.add('-translate-x-8');
+                            el.classList.remove('translate-x-8');
+                        } else {
+                            el.classList.add('translate-x-8');
+                            el.classList.remove('-translate-x-8');
+                        }
+                    } else if (elIdx !== -1) {
+                        el.classList.add('-translate-x-8');
+                        el.classList.remove('translate-x-8');
+                    }
+                });
+                
+                targetView.classList.remove('opacity-0', 'pointer-events-none', '-translate-x-8', 'translate-x-8');
+                targetView.classList.add('opacity-100', 'pointer-events-auto', 'translate-x-0');
+                
+                setContainerHeight(targetView);
+            }
+
+            const getSvgCheck = () => `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+
+            function updateStepper(step) {
+                const pb = document.getElementById('progress-bar');
+                if(step === 1) pb.style.width = '0%';
+                if(step === 2) pb.style.width = '50%';
+                if(step === 3) pb.style.width = '100%';
+                
+                for(let i=1; i<=3; i++) {
+                    const circle = document.getElementById('step-circle-'+i);
+                    const label = document.getElementById('step-label-'+i);
+                    const icon = document.getElementById('step-icon-'+i);
+                    
+                    circle.className = 'w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ring-[6px] ring-white';
+                    
+                    if(i < step) {
+                        circle.classList.add('bg-blue-600', 'text-white');
+                        circle.classList.remove('step-active-glow');
+                        icon.innerHTML = getSvgCheck();
+                        label.className = 'text-[10px] font-semibold mt-2 text-blue-600 uppercase tracking-wider transition-colors duration-300';
+                    } else if (i === step) {
+                        circle.classList.add('bg-blue-600', 'text-white', 'step-active-glow');
+                        icon.innerHTML = i;
+                        label.className = 'text-[10px] font-semibold mt-2 text-blue-600 uppercase tracking-wider transition-colors duration-300';
+                    } else {
+                        circle.classList.add('bg-gray-100', 'text-gray-400');
+                        circle.classList.remove('step-active-glow');
+                        icon.innerHTML = i;
+                        label.className = 'text-[10px] font-semibold mt-2 text-gray-400 uppercase tracking-wider transition-colors duration-300';
+                    }
+                }
+            }
+
+            function triggerAnim(id) {
+                const el = document.getElementById(id);
+                if(el) {
+                    el.classList.remove('anim-spring-scale');
+                    void el.offsetWidth; // trigger reflow
+                    el.classList.add('anim-spring-scale');
+                }
+            }
+
+            function showError(msg) {
+                document.getElementById('error-message').textContent = msg;
+                setView(views.error);
+                triggerAnim('error-icon');
+            }
+            
+            function showWarning(msg) {
+                if(msg) document.getElementById('warning-message').textContent = msg;
+                setView(views.warning);
+                triggerAnim('warning-icon');
+            }
 
             if (!token) {
-                initialLoading.classList.add('hidden');
                 showError("No token provided in the URL.");
                 return;
             }
 
-            // Fetch Token Details without taking final action
+            // Fetch request details
             fetch(`/api/verify-token?token=${encodeURIComponent(token)}`)
                 .then(res => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
-                    initialLoading.classList.add('hidden');
-                    
                     if (status !== 200) {
-                        showError(body.detail || "Invalid or expired token.");
+                        showError(body.detail || "The token is expired or has been tampered with. Please request a new approval link.");
                         return;
                     }
 
-                    // Populate UI Details
-                    detailsCard.classList.remove('hidden');
-                    reqIdEl.textContent = body.Request_ID;
-                    empIdEl.textContent = body.Employee_ID;
+                    document.getElementById('s1-req-id').textContent = body.Request_ID;
+                    document.getElementById('s1-emp-id').textContent = body.Employee_ID;
+                    document.getElementById('s2-summary').textContent = `Req: ${body.Request_ID} • Emp: ${body.Employee_ID}`;
                     
                     const action = body.Action.toLowerCase();
+                    const decisionBox = document.getElementById('decision-box');
+                    const decisionText = document.getElementById('decision-text');
+                    const btnConfirm = document.getElementById('btn-confirm');
+                    const btnConfirmText = document.getElementById('btn-confirm-text');
                     
-                    // Style UI based on action
                     if (action === 'approved') {
-                        decisionCard.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-200');
+                        decisionBox.classList.add('bg-emerald-50/50', 'border-emerald-100', 'text-emerald-900');
                         decisionText.textContent = "You are about to APPROVE this leave request.";
-                        actionBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'focus:ring-emerald-500');
-                        btnText.textContent = "Confirm Approval";
+                        btnConfirm.className = "flex-1 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 focus:ring-emerald-500 text-white rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2";
+                        btnConfirmText.textContent = "Confirm Approval";
                     } else {
-                        decisionCard.classList.add('bg-rose-50', 'text-rose-800', 'border-rose-200');
+                        decisionBox.classList.add('bg-rose-50/50', 'border-rose-100', 'text-rose-900');
                         decisionText.textContent = "You are about to REJECT this leave request.";
-                        actionBtn.classList.add('bg-rose-600', 'hover:bg-rose-700', 'focus:ring-rose-500');
-                        btnText.textContent = "Confirm Rejection";
+                        btnConfirm.className = "flex-1 py-3.5 px-4 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 focus:ring-rose-500 text-white rounded-xl font-medium transition-all duration-200 active:scale-[0.98] shadow-sm flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-offset-2";
+                        btnConfirmText.textContent = "Confirm Rejection";
                     }
 
-                    // Attach click handler for confirmation
-                    actionBtn.addEventListener('click', () => submitAction(token, actionBtn, btnText, btnSpinner));
+                    updateStepper(1);
+                    setView(views.step1);
                 })
-                .catch(err => {
-                    initialLoading.classList.add('hidden');
-                    showError("Failed to connect to the server.");
-                });
+                .catch(() => showError("Failed to communicate with the server."));
 
-            // Trigger Final Action
-            function submitAction(token, btn, textEl, spinnerEl) {
-                // Set Loading state on the button
-                btn.disabled = true;
-                textEl.textContent = "Syncing with n8n workflow...";
-                spinnerEl.classList.remove('hidden');
-                btn.classList.add('opacity-80', 'cursor-not-allowed');
+            // Handlers
+            document.getElementById('btn-continue').addEventListener('click', () => {
+                updateStepper(2);
+                setView(views.step2);
+            });
+            
+            document.getElementById('btn-back').addEventListener('click', () => {
+                updateStepper(1);
+                setView(views.step1);
+            });
 
+            document.getElementById('btn-confirm').addEventListener('click', () => {
+                const processingState = document.getElementById('processing-state');
+                
+                // Show processing overlay inside step 2
+                processingState.classList.remove('opacity-0', 'pointer-events-none');
+                processingState.classList.add('opacity-100', 'pointer-events-auto');
+                
                 fetch('/api/submit-action', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -215,53 +351,29 @@
                 })
                 .then(res => res.json().then(data => ({ status: res.status, body: data })))
                 .then(({ status, body }) => {
-                    // Hide Details Card & Status pill
-                    detailsCard.classList.add('hidden');
-                    statusPill.classList.add('hidden');
+                    processingState.classList.add('opacity-0', 'pointer-events-none');
+                    processingState.classList.remove('opacity-100', 'pointer-events-auto');
                     
                     if (status === 200) {
                         if (body.status === 'already_processed') {
                             showWarning(body.message);
                         } else {
-                            showSuccess(body.message);
+                            document.getElementById('success-message').textContent = body.message;
+                            updateStepper(3);
+                            setView(views.step3);
+                            triggerAnim('success-icon');
                         }
                     } else {
                         showError(body.detail || "An error occurred while processing.");
                     }
                 })
-                .catch(err => {
-                    detailsCard.classList.add('hidden');
-                    statusPill.classList.add('hidden');
-                    showError("Failed to communicate with the server.");
+                .catch(() => {
+                    processingState.classList.add('opacity-0', 'pointer-events-none');
+                    processingState.classList.remove('opacity-100', 'pointer-events-auto');
+                    showError("Failed to submit decision. Server connection issue.");
                 });
-            }
-
-            // State UI functions
-            function showSuccess(msg) {
-                successState.classList.remove('hidden');
-                successMessage.textContent = msg;
-                statusPill.textContent = "Completed";
-                statusPill.classList.remove('hidden', 'bg-blue-50', 'text-blue-700');
-                statusPill.classList.add('bg-emerald-50', 'text-emerald-700');
-            }
-
-            function showWarning(msg) {
-                warningState.classList.remove('hidden');
-                warningMessage.textContent = msg;
-                statusPill.textContent = "Processed";
-                statusPill.classList.remove('hidden', 'bg-blue-50', 'text-blue-700');
-                statusPill.classList.add('bg-amber-50', 'text-amber-700');
-            }
-
-            function showError(msg) {
-                errorState.classList.remove('hidden');
-                errorMessage.textContent = msg;
-                statusPill.textContent = "Error";
-                statusPill.classList.remove('hidden', 'bg-blue-50', 'text-blue-700');
-                statusPill.classList.add('bg-rose-50', 'text-rose-700');
-            }
+            });
         });
     </script>
 </body>
 </html>
-
